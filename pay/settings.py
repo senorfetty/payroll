@@ -25,9 +25,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-@wydw!xl8%c*vl-vf31c_58-i!1btqcwst()fw6aj!#teuk)yf'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+
+ALLOWED_HOSTS = ['payroll-production-e19a.up.railway.app', '127.0.0.1', 'localhost']
+
+CSRF_TRUSTED_ORIGINS = ['https://payroll-production-e19a.up.railway.app']
 
 # Application definition
 
