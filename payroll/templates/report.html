@@ -1,0 +1,74 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      
+        <title>Payroll Report</title>
+        <link rel="stylesheet" href="{% static 'css/report.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    
+</head>
+<body>
+    <header class="dashboard-header">
+        <div class="logo">
+            <img src="{% static 'img/logo.jpg' %}" alt="" class="fluid">
+        </div>           
+    </header>
+
+    <section class="quick-actions">
+        <a  href="{% url 'dashboard' %}"><button class="back">Back To Dashboard</button></a>
+    </section>
+
+    <h1>Payroll Report</h1>
+    <div class="button-container">
+        <a href="{% url 'excel_report' %}">
+            <button class="download-btn">Download Excel File</button>
+        </a>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Employee Name</th>
+                <th>Phone Number</th>
+                <th>Designation</th>
+                <th>Days Worked</th>
+                <th>Gross Pay</th>
+                <th>Total Advances</th>
+                <th>Total Deductions</th>
+                <th>Total Arrears</th>
+                <th>Net Pay</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in report_data %}
+            <tr>
+                <td>{{ record.employee.first_name }} {{ record.employee.last_name }}</td>
+                <td>{{ record.employee.phone_number }}</td>
+                <td>{{ record.employee.area_of_work }}</td>
+                <td>{{ record.employee.days_worked }}</td>
+                <td>{{ record.employee.salary|intcomma }}</td>
+                <td>{{ record.advances_total|intcomma }}</td>
+                <td>{{ record.deductions_sum|intcomma }}</td>
+                <td>{{ record.arrears_total|intcomma }}</td>
+                <td class='totals'>{{ record.net_pay|intcomma }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>     
+        <tfoot>
+            <tr class='totals'>
+                <th colspan="5">Totals</th>
+                <td>{{ total_advances|intcomma }}</td>
+                <td>{{ total_deductions|intcomma }}</td>
+                <td>{{ total_arrears|intcomma }}</td>
+                <td>{{ total_net_pay|intcomma }}</td>
+            </tr>
+        </tfoot>
+         
+    </table>
+</body>
+</html>

@@ -1,0 +1,135 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payslip</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+            color: #333;
+        }
+        
+        .dashboard-header {
+            background-color: #cc0000; /* Red background */
+            color: #fff;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .dashboard-header .logo img {
+            max-height: 60px;
+        }
+        
+        .payslip {
+            max-width: 800px;
+            margin: 10px auto;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            padding: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .payslip h1 {
+            color: #cc0000; /* Red text for headings */
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        
+        .payslip h2 {
+            color: #333;
+            border-bottom: 2px solid #cc0000; /* Red underline for subheadings */
+            padding-bottom: 5px;
+            margin-top: 15px;
+            font-size: 20px;
+        }
+        
+        .payslip p, .payslip li {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #555;
+        }
+        
+        .payslip ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        
+        .payslip ul li {
+            margin-bottom: 10px;
+        }
+        
+        .payslip p {
+            margin: 10px 0;
+        }
+        
+        .payslip .total {
+            font-weight: bold;
+            color: #000;
+        }
+        
+        span {
+            font-size: 20px;
+            color: red;
+            font-weight: bolder;
+        }       
+    </style>
+
+</head>
+
+<body>
+
+    <h1>SPS Company Payslip</h1>
+    
+
+    <div class="payslip">
+        <h1>Payslip for {{ employee.first_name }} {{ employee.last_name }}</h1>
+        <p><strong>Employee ID:</strong> {{ employee.employee_id }}</p>
+        <p><strong>Area of Work:</strong> {{ employee.area_of_work }}</p>
+        <p class="total"><strong>Gross Pay:</strong> <span>{{ employee.salary }}</span></p>
+
+        <h2>Deductions</h2>
+        <ul>
+            {% for deduction in deductions %}
+                <li><strong>NHIF:</strong> <span>{{ deduction.nhif|default:"NIL" }}</span></li>
+                <li><strong>NSSF:</strong> <span> {{ deduction.nssf|default:"NIL" }}</span></li>
+                <li><strong>Uniform:</strong> <span>{{ deduction.uniform|default:"NIL" }}</span></li>
+                <li><strong>Fuel:</strong> <span> {{ deduction.fuel|default:"NIL" }}</span></li>
+            {% endfor %}
+        </ul>
+        <p class="total"><strong>Total Deductions:</strong> <span> {{ deductions_sum }}</span></p>
+
+        <h2>Advances</h2>
+        {% if advances %}
+            {% for advance in advances %}
+                <p><strong>Advance:</strong> <span> - {{ advance.amount }}</span></p>
+            {% endfor %}
+        {% else %}
+            <p><strong>Total Advance:</strong> NIL</p>
+        {% endif %}
+
+        <h2>Arrears</h2>
+        {% if arrears %}
+            {% for arrear in arrears %}
+                <p><strong>Arrear:</strong><span> + {{ arrear.amount }}</span></p>
+            {% endfor %}
+        {% else %}
+            <p><strong>Total Arrears:</strong> NIL</p>
+        {% endif %}
+
+        <h2>Net Pay</h2>
+        <p class="total"><span>{{ net_pay }}</span></p>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,88 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f9f9f9;
+}
+
+header{
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: #ff0000;
+    color: white;
+}
+
+.logo img {
+    max-width: 120px;
+    max-height: 50px;
+    height: auto;
+    width: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+table, th, td {
+    border: 1px solid #ddd;
+}
+th, td {
+    padding: 8px;
+    text-align: left;
+}
+th {
+    background-color: #333;
+    color: white;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center; 
+    margin-top: 30px; 
+}
+
+
+.download-btn {
+    background-color: #ff0000;
+    color: #fff; 
+    border: none;
+    padding: 12px 25px; 
+    font-size: 16px; 
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+
+.download-btn:hover {
+    background-color: #000000; 
+    transform: translateY(-3px); 
+}
+
+
+.download-btn:focus {
+    outline: none;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+}
+
+
+@media (max-width: 600px) {
+    .download-btn {
+        padding: 10px 20px; 
+        font-size: 14px;
+    }
+}
+
+.back {
+    background-color: black;
+    color: white;
+    padding: 12px;
+}
+
+.totals {
+    font-size: larger;
+    font-weight: 900;
+}

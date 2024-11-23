@@ -1,0 +1,210 @@
+{% extends 'employees.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}
+<title>Previous Month arrears </title>
+{% endblock %}
+
+{% block employee-section %}
+<h1>Records</h1>
+
+
+
+<div class="employee-buttons">
+    <button id="deduction-btn" class="deduction-btn">Add New</button>
+    <button class="add-employee-btn">
+        <a href="{% url 'employees' %}" class="ded-btn">Employees </a>
+    </button>
+    <button class="add-employee-btn">
+        <a href="{% url 'deductions' %}" class="ded-btn">Deductions</a>
+    </button>
+    <button class="add-employee-btn">
+        <a href="{% url 'advance' %}" class="ded-btn">Advances</a>
+    </button>
+ </div>
+
+
+<div id="deduction-modal" class="deduction-modal">
+    <div class="deduction-modal-content">
+        <span id="close-modal" class="close">&times;</span>
+        <h2>Record arrears</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Save</button>
+        </form>
+    </div>
+</div>
+
+<div class="deductions-section">
+    <h2 class="deductions-header">Month arrears</h2>
+    <div class="button-container">
+        <a href="{% url 'excel_report' %}">
+            <button class="download-btn">Download Excel File</button>
+        </a>
+    </div>
+        <table class="deductions-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Amount</th>
+                    <th>Month</th>
+                    <th>Manage</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for arrear in arrears %}
+                <tr>
+                    <td>{{arrear.employee}}</td>
+                    <td>{{arrear.amount|intcomma}}</td>
+                    <td>{{arrear.month}}</td>
+                    <td>
+                        <button class="edit-btn" onclick="openEditModal('{{arrear.id}}')"  data-employee="{{arrear.employee}}">Edit</button>
+                        <form action="{% url 'delete_arrears' arrear.id %}" method="post" style="display: inline-block;" class="delete-form">
+                            {% csrf_token %}
+                            <button class="delete-btn" type="button" data-employee="{{ arrear.employee }}"> Delete </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}                
+            </tbody>
+        </table>
+</div>
+
+<div id="delete-confirmation-modal" class="confirmation-modal">
+    <div class="confirmation-modal-content">
+        <h3>Are you sure you want to delete arrears records for <span id="employee-name"></span>?</h3>
+        <button id="confirm-delete" class="confirm-btn">Yes, Delete</button>
+        <button id="cancel-delete" class="cancel-btn">Cancel</button>
+    </div>
+</div>
+
+<div class="deduction-modal" id="edit-modal" style="display: none;">
+    <div class="deduction-modal-content">
+        <span id="close-edit-modal" class="close">&times;</span>
+        <h2>Edit <span id="employeeName"></span>'s Arreas Records</h2>
+        <form action="" method="post" id="edit-form">
+            {% csrf_token %}
+            <input type="hidden" id="arrears-id" name="id">
+
+            <div class="form-group">
+                <label for="edit-amount">Amount:</label>
+                <input type="number" min="0" id="edit-amount" name="amount">
+            </div>
+
+            <div class="form-group">
+                <label for="edit-month">Month:</label>
+                <input type="text" name="month" id="edit-month">
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openEditModal(arrearId) {
+        fetch(`/arrears/${arrearId}/edit/`)
+        .then(response  => response.json())
+        .then(data => {
+            document.getElementById('arrears-id').value =arrearId;
+            document.getElementById('edit-amount').value = data.amount;
+            document.getElementById('edit-month').value = data.month;
+
+            document.getElementById('edit-form').action = `/arrears/${arrearId}/update/`
+            document.getElementById('edit-modal').style.display = 'block'
+        })
+        .catch(error => console.error('Error:',error));
+    }
+
+    document.getElementById('close-edit-modal').onclick = function () {
+        document.getElementById('edit-modal').style.display = 'none';
+    }
+
+    windows.onclick = function (event) {
+        const modal = document.getElementById('edit-modal')
+        if (event.target == modal) {
+            modal.style.display = 'none'
+        }
+    }
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const editBtn = document.querySelectorAll('.edit-btn')
+        const employeeNameSpan = document.getElementById('employeeName')
+
+
+        editBtn.forEach(button => {
+            button.addEventListener('click', function() {
+                const employeeName=this.getAttribute('data-employee')
+                employeeNameSpan.textContent = employeeName;
+            })
+        })
+    })
+</script>
+
+<script>
+    const deductionModal= document.getElementById('deduction-modal')
+    const openDeductionModal = document.getElementById('deduction-btn')
+    const closeDeductionModal = document.getElementById('close-modal')
+
+    openDeductionModal.onclick = function () {
+        deductionModal.style.display = 'block';
+    }
+
+    closeDeductionModal.onclick = function() {
+        deductionModal.style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target === deductionModal) {
+            deductionModal.style.display = 'none';
+        }
+    }
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        const confirmationModal = document.getElementById('delete-confirmation-modal');
+        const confirmDeleteBtn= document.getElementById('confirm-delete');
+        const cancelDeleteBtn = document.getElementById('cancel-delete');
+        const employeeNameSpan = document.getElementById('employee-name');
+        let formToSubmit = null;
+
+        deleteButtons.forEach (button => {
+            button.addEventListener('click', function() {
+                const employeeName= this.getAttribute('data-employee');
+                employeeNameSpan.textContent = employeeName;
+                formToSubmit = this.closest('.delete-form');
+                confirmationModal.style.display = 'flex'
+            });
+        });
+
+        confirmDeleteBtn.addEventListener('click', function () {
+            if (formToSubmit) {
+                formToSubmit.submit();
+            }
+            confirmationModal.style.display = 'none';
+        })
+
+        cancelDeleteBtn.addEventListener('click', function() {
+            confirmationModal.style.display = 'none'
+            formToSubmit = null;
+        })
+
+        window.onlick = function(event){
+            if(event.target === confirmationModal){
+                confirmationModal.style.display = 'none';
+                formToSubmit= null;
+            }
+        }
+    })
+</script>
+
+
+
+
+
+{% endblock %}
+

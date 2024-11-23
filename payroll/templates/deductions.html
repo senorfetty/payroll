@@ -1,0 +1,225 @@
+{% extends 'employees.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}
+<title>Deductions </title>
+{% endblock %}
+
+{% block employee-section %}
+<h1>Deduction Records</h1>
+
+
+
+<div class="employee-buttons">
+    <button id="deduction-btn" class="deduction-btn">Add New</button>
+    <button class="add-employee-btn">
+        <a href="{% url 'employees' %}" class="ded-btn">Employees </a>
+    </button>
+    <button class="add-employee-btn">
+        <a href="{% url 'advance' %}" class="ded-btn">Advances</a>
+    </button>
+    <button class="add-employee-btn">
+        <a href="{% url 'arrears' %}" class="ded-btn">Arrears</a>
+    </button>
+
+ </div>
+
+
+<div id="deduction-modal" class="deduction-modal">
+    <div class="deduction-modal-content">
+        <span id="close-modal" class="close">&times;</span>
+        <h2>Record Deduction</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Save</button>
+        </form>
+    </div>
+</div>
+
+<div class="deductions-section">
+    <h2 class="deductions-header">Deductions</h2>
+    <div class="button-container">
+        <a href="{% url 'excel_report' %}">
+            <button class="download-btn">Download Excel File</button>
+        </a>
+    </div>
+        <table class="deductions-table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>NHIF</th>
+                    <th>NSSF</th>
+                    <th>UNIFORM</th>
+                    <th>FUEL</th>
+                    <th>Manage</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for deduction in deductions %}
+                <tr>
+                    <td>{{deduction.employee}}</td>
+                    <td>{{deduction.nhif}}</td>
+                    <td>{{deduction.nssf}}</td>
+                    <td>{{deduction.uniform}}</td>
+                    <td>{{deduction.fuel}}</td>
+                    <td>
+                        <button class="edit-btn" onclick="openEditModal('{{ deduction.id }}')"  data-employee='{{ deduction.employee }}' >Edit</button>
+                        <form action="{% url 'delete_deductions' deduction.id %}" method="post" style="display: inline-block;" class="delete-form">
+                            {% csrf_token %}
+                            <button class="delete-btn" type="button" data-employee="{{ deduction.employee }}"> Delete </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}                
+            </tbody>
+        </table>
+</div>
+
+<div id="edit-modal" class="deduction-modal" style="display: none">
+    <div class="deduction-modal-content">
+        <span class="close" id="close-edit-modal">&times;</span>
+        <h2>Edit <span id="employeeName"></span>'s Deduction Record</h2>
+        <form action="" method="post" id="edit-form">
+            {% csrf_token %}
+            <input type="hidden" name="id" id="deduction-id">
+
+            <div class="form-group">
+                <label for="edit-nhif">NHIF:</label>
+                <input type="number" name="nhif" min="0" id="edit-nhif">
+            </div>
+
+            <div class="form-group">
+                <label for="edit-nssf">NSSF:</label>
+                <input type="number" name="nssf" min="0" id="edit-nssf">
+            </div>
+
+            <div class="form-group">
+                <label for="edit-uniform">UNIFORM:</label>
+                <input type="number" name="uniform" min="0" id="edit-uniform">
+            </div>
+
+            <div class="form-group">
+                <label for="edit-fuel">FUEL:</label>
+                <input type="number" name="fuel" min="0" id="edit-fuel">
+            </div>
+
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+</div>
+
+<div id="delete-confirmation-modal" class="confirmation-modal">
+    <div class="confirmation-modal-content">
+        <h3>Are you sure you want to delete deduction records for <span id="employee-name"></span>?</h3>
+        <button id="confirm-delete" class="confirm-btn">Yes, Delete</button>
+        <button id="cancel-delete" class="cancel-btn">Cancel</button>
+    </div>
+</div>
+
+<script>
+    const deductionModal= document.getElementById('deduction-modal')
+    const openDeductionModal = document.getElementById('deduction-btn')
+    const closeDeductionModal = document.getElementById('close-modal')
+
+    openDeductionModal.onclick = function () {
+        deductionModal.style.display = 'block';
+    }
+
+    closeDeductionModal.onclick = function() {
+        deductionModal.style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        if (event.target === deductionModal) {
+            deductionModal.style.display = 'none';
+        }
+    }
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        const confirmationModal = document.getElementById('delete-confirmation-modal');
+        const confirmDeleteBtn= document.getElementById('confirm-delete');
+        const cancelDeleteBtn = document.getElementById('cancel-delete');
+        const employeeNameSpan = document.getElementById('employee-name');
+        let formToSubmit = null;
+
+        deleteButtons.forEach (button => {
+            button.addEventListener('click', function() {
+                const employeeName= this.getAttribute('data-employee');
+                employeeNameSpan.textContent = employeeName;
+                formToSubmit = this.closest('.delete-form');
+                confirmationModal.style.display = 'flex'
+            });
+        });
+
+        confirmDeleteBtn.addEventListener('click', function () {
+            if (formToSubmit) {
+                formToSubmit.submit();
+            }
+            confirmationModal.style.display = 'none';
+        })
+
+        cancelDeleteBtn.addEventListener('click', function() {
+            confirmationModal.style.display = 'none'
+            formToSubmit = null;
+        })
+
+        window.onlick = function(event){
+            if(event.target === confirmationModal){
+                confirmationModal.style.display = 'none';
+                formToSubmit= null;
+            }
+        }
+    })
+</script>
+
+<script>
+    function openEditModal(deductionId) {
+        fetch(`/deductions/${deductionId}/edit/`)
+        .then (response => response.json())
+        .then (data => {
+            document.getElementById('deduction-id').value = deductionId;
+            document.getElementById('edit-nhif').value = data.nhif;
+            document.getElementById('edit-nssf').value = data.nssf;
+            document.getElementById('edit-uniform').value = data.uniform;
+            document.getElementById('edit-fuel').value = data.fuel;
+
+            document.getElementById('edit-form').action= `/deductions/${deductionId}/update/`;
+            document.getElementById('edit-modal').style.display = 'block';
+        })
+        .catch(error => console.error('Error:', error))
+    }
+
+    document.getElementById('close-edit-modal').onclick = function () {
+        document.getElementById('edit-modal').style.display = 'none';        
+    };
+
+
+    windows.onclick = function (event) {
+        const modal = document.getElementById('edit-modal');
+        if(event.target == modal) {
+            modal.style.display = 'none'
+        }
+    }
+
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const editBtns = document.querySelectorAll('.edit-btn')
+        const employeeNameSpan = document.getElementById('employeeName')
+
+        editBtns.forEach(button => {
+            button.addEventListener('click', function () {
+                const employeeName = this.getAttribute('data-employee');
+                employeeNameSpan.textContent = employeeName
+            })
+        })
+    })
+</script>
+
+{% endblock %}

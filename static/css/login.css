@@ -1,0 +1,93 @@
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #000000, #ff0707);
+    overflow: hidden;
+}
+
+
+.login-container {
+    background: white;
+    padding: 40px 30px;
+    width: 400px;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+.login-container h2 {
+    font-size: 24px;
+    margin-bottom: 30px;
+    color: #333;
+}
+.login-container .input-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+.login-container .input-group input {
+    width: 85%;
+    padding: 15px 40px 15px 40px; 
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    outline: none;
+    font-size: 16px;
+}
+.login-container .input-group i {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    color: #888;
+}
+.login-container .login-btn {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background: #000000;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+}
+.login-container .login-btn:hover {
+    background: #ff0000;
+}
+.login-container .forgot-link {
+    margin-top: 10px;
+    display: inline-block;
+    color: #888;
+    font-size: 14px;
+}
+.login-container .forgot-link:hover {
+    color: #333;
+}
+
+.login-container .input-group i.fa-eye {
+    left: 100%;
+}
+
+.login-container .input-group i.fa-eye:hover {
+    cursor:pointer;
+}
+
+#dashboard {
+    background-color: rgb(231, 173, 173);
+}
+
+.messages {
+    width: 60%;
+    margin: 0 auto;
+    display: flex;
+    justify-content:center;
+    align-items: center;
+    padding: 20px;
+    border-radius: 5px;
+    background-color: red;
+    text-decoration: dashed;
+    text-transform: uppercase;
+    color: white;
+}

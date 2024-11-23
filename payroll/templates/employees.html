@@ -1,0 +1,392 @@
+{% extends 'dashboard.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}
+<title>SPS Employees</title>
+{% endblock %}
+
+{% block this %}
+
+<body id="dashboard">
+    <div class="dashboard">
+       
+        <header class="dashboard-header">
+            <div class="logo">
+                <img src="{% static 'img/logo.jpg' %}" alt="" class="fluid">
+            </div>
+            <div class="user-profile">
+                <button class="logout-btn" id="logout-btn">Logout</button>
+            </div>
+                        
+        </header>
+{% endblock %}
+
+{% block dashboard %}
+
+<section class="quick-actions">
+    <a href="{% url 'dashboard' %}"><button>Back To Dashboard</button></a>
+</section>
+
+{% block employee-section %}
+<h1 style="padding: 5px;">Employee Management</h1>
+
+<!-- Add Employee Button -->
+ <div class="employee-buttons">
+    <button id="add-employee-btn" class="add-employee-btn">Add New Employee</button>
+    <button class="add-employee-btn">
+        <a href="{% url 'advance' %}" class="ded-btn">Advance </a>
+    </button>
+    <button class="add-employee-btn">
+        <a href="{% url 'deductions' %}" class="ded-btn">Deductions</a>
+    </button>
+    <button class="add-employee-btn">
+        <a href="{% url 'arrears' %}" class="ded-btn">Arrears</a>
+    </button>
+
+ </div>
+
+<!-- Employee Form Modal -->
+<div id="employee-modal" class="employee-modal">
+    <div class="employee-modal-content">
+        <span id="close-modal" class="close">&times;</span>
+        <h2>Add New Employee</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Add Employee</button>
+        </form>
+    </div>
+</div>
+
+<div class="search-bar">
+    <form method="get" action="{% url 'employees' %}">
+        <input type="text" name="q" placeholder="Search employees..." value="{{ query|default_if_none:'' }}">
+        <button type="submit">Search</button>
+    </form>
+    
+</div>
+<div class="button-container">
+    <a href="{% url 'generate_employee_list' %}">
+        <button class="download-btn">Download Employee List</button>
+    </a>
+</div>
+
+<!-- Employee List -->
+<div class="employee-list-wrapper">
+    <div class="employee-list">
+        <h2>Employee List</h2>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Phone Number</th>
+                        <th>Gender</th>
+                        <th>Area of Work</th>
+                        <th>ID No</th>
+                        <th>Days Worked</th>
+                        <th>Gross Salary</th>
+                        <th>Actions</th>
+                        <th>Net Pay</th>                        
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for employee in employees %}
+                    <tr>
+                        <td>{{ employee.first_name }}</td>
+                        <td>{{ employee.last_name }}</td>                        
+                        <td>{{ employee.phone_number }}</td>
+                        <td>{{ employee.gender }}</td>
+                        <td>{{ employee.area_of_work }}</td>
+                        <td>{{ employee.id_number }}</td>
+                        <td>{{ employee.days_worked }}</td>
+                        <td>{{ employee.salary|intcomma }}</td>
+                        <td>
+                            <button class="edit-btn" onclick="openEditModal('{{ employee.employee_id }}')">Edit</button>
+                            <form action="{% url 'delete_employee' employee.employee_id %}" method="post" style="display: inline-block;" class="delete-form">
+                                {% csrf_token %}
+                                <button class="delete-btn" type="button" data-employee="{{ employee.first_name }} {{ employee.last_name }}">Delete</button>
+                            </form>
+                        </td>
+                        <td style="font-size: larger;font-weight:bolder">{{ employee.net_pay }}</td>
+                        <td>
+                            <a href="{% url 'generate_payslip' employee.employee_id %}" target='_blank'>
+                                <button>Generate Payslip</button>
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="pagination">
+            {% if employees.has_previous %}
+                <a href="?page=1{% if query %}&q={{ query }}{% endif %}">&laquo; First</a>
+                <a href="?page={{ employees.previous_page_number }}{% if query %}&q={{ query }}{% endif %}">Previous</a>
+            {% endif %}
+            
+            <span>Page {{ employees.number }} of {{ employees.paginator.num_pages }}</span>
+            
+            {% if employees.has_next %}
+                <a href="?page={{ employees.next_page_number }}{% if query %}&q={{ query }}{% endif %}">Next</a>
+                <a href="?page={{ employees.paginator.num_pages }}{% if query %}&q={{ query }}{% endif %}">Last &raquo;</a>
+            {% endif %}
+        </div>
+        
+    </div>
+</div>
+
+<div id="delete-confirmation-modal" class="confirmation-modal">
+    <div class="confirmation-modal-content">
+        <h3>Are you sure you want to delete <span id="employee-name"></span> from the list?</h3>
+        <button id="confirm-delete" class="confirm-btn">Yes, Delete</button>
+        <button id="cancel-delete" class="cancel-btn">Cancel</button>
+    </div>
+</div>
+
+<div id="edit-modal" class="employee-modal" style="display:none;">
+    <div class="employee-modal-content">
+        <span id="close-edit-modal" class="close">&times;</span>
+        <h2>Edit Employee</h2>
+        <form id="edit-form" method="post" action="">
+            {% csrf_token %}
+            <input type="hidden" id="employee-id" name="employee_id">
+            
+            <div class="form-group">
+                <label for="edit-last-name">Last Name:</label>
+                <input type="text" id="edit-last-name" name="last_name">
+            </div>
+            
+            <div class="form-group">
+                <label for="edit-first-name">First Name:</label>
+                <input type="text" id="edit-first-name" name="first_name">
+            </div>
+            
+            <div class="form-group">
+                <label for="edit-phone-number">Phone Number:</label>
+                <input type="tel" id="edit-phone-number" name="phone_number">
+            </div>
+            
+            <div class="form-group">
+                <label for="edit-gender">Gender:</label>
+                <select id="edit-gender" name="gender">
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="edit-area-of-work">Area of Work:</label>
+                <input type="text" id="edit-area-of-work" name="area_of_work">
+            </div>
+            
+            <div class="form-group">
+                <label for="edit-id-number">ID Number:</label>
+                <input type="number" id="edit-id-number" min="0" name="id_number">
+            </div>
+
+            <div class="form-group">
+                <label for="edit-days-worked">Days Worked:</label>
+                <select id="edit-days-worked" name="days_worked">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                    <option value="6">6</option>
+                    <option value="7">7</option>
+                    <option value="8">8</option>
+                    <option value="9">9</option>
+                    <option value="10">10</option>
+                    <option value="11">11</option>
+                    <option value="12">12</option>
+                    <option value="13">13</option>
+                    <option value="14">14</option>
+                    <option value="15">15</option>
+                    <option value="16">16</option>
+                    <option value="17">17</option>
+                    <option value="18">18</option>
+                    <option value="19">19</option>
+                    <option value="20">20</option>
+                    <option value="21">21</option>
+                    <option value="22">22</option>
+                    <option value="23">23</option>
+                    <option value="24">24</option>
+                    <option value="25">25</option>
+                    <option value="26">26</option>
+                    <option value="27">27</option>
+                    <option value="28">28</option>
+                    <option value="29">29</option>
+                    <option value="30">30</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="edit-salary">Salary:</label>
+                <input type="number" id="edit-salary" min="0" step name="salary">
+            </div>
+                      
+            
+            <button type="submit">Save Changes</button>
+        </form>
+    </div>
+</div>
+
+<div id="logout-confirmation-modal" class="confirmation-modal-logout">
+    <div class="confirmation-modal-content-logout">
+        <h3>Are you sure you want to Logout </span>? </h3>
+        <button id="confirm-logout" class="confirm-btn-logout">Yes, Logout</button>
+        <button id="cancel-logout" class="cancel-btn-logout">Cancel</button>
+    </div>
+</div>
+
+<script>
+    const mdal = document.getElementById("logout-confirmation-modal");
+    const confirmBtn = document.getElementById("confirm-logout");
+    const cancelBtn = document.getElementById("cancel-logout");
+    const logoutBtn = document.getElementById("logout-btn");
+
+    // Function to open the modal
+    function openModal() {
+        mdal.style.display = "flex"; // Show the modal
+    }
+
+    // Function to close the modal
+    function closeModal() {
+        mdal.style.display = "none"; // Hide the modal
+    }
+
+    // Show the modal when the logout button is clicked
+    logoutBtn.addEventListener("click", function(event) {
+        event.preventDefault(); // Prevent the default logout action
+        openModal(); // Open the modal for confirmation
+    });
+
+    // Confirm logout (this should redirect to the logout URL)
+    confirmBtn.addEventListener("click", function() {
+        window.location.href = "{% url 'log_out' %}"; // Redirect to logout URL
+    });
+
+    // Cancel logout
+    cancelBtn.addEventListener("click", function() {
+        closeModal(); // Close the modal if "Cancel" is clicked
+    });
+</script>
+<!-- JavaScript to Handle Modal -->
+<script>
+    const modal = document.getElementById('employee-modal');
+    const openModalBtn = document.getElementById('add-employee-btn');
+    const closeModalBtn = document.getElementById('close-modal');
+
+    // Open modal
+    openModalBtn.onclick = function() {
+        modal.style.display = 'block';
+    };
+
+    // Close modal
+    closeModalBtn.onclick = function() {
+        modal.style.display = 'none';
+    };
+
+    // Close modal when clicking outside of it
+    window.onclick = function(event) {
+        if (event.target === modal) {
+            modal.style.display = 'none';
+        }
+    };
+</script>
+
+<script>
+    function openEditModal(employeeId) {
+        fetch(`/employees/${employeeId}/edit/`)
+            .then(response => response.json())
+            .then(data => {
+                // Populate form fields
+                document.getElementById('employee-id').value = employeeId;
+                document.getElementById('edit-last-name').value = data.last_name;
+                document.getElementById('edit-first-name').value = data.first_name;
+                document.getElementById('edit-phone-number').value = data.phone_number;
+                document.getElementById('edit-gender').value = data.gender;
+                document.getElementById('edit-area-of-work').value = data.area_of_work;
+                document.getElementById('edit-id-number').value = data.id_number;
+                document.getElementById('edit-days-worked').value = data.days_worked;
+                document.getElementById('edit-salary').value = data.salary;
+
+                
+                document.getElementById('edit-form').action = `/employees/${employeeId}/update/`;
+                document.getElementById('edit-modal').style.display = 'block';
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    // Close modal
+    document.getElementById('close-edit-modal').onclick = function() {
+        document.getElementById('edit-modal').style.display = 'none';
+    };
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('edit-modal');
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    };
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const deleteButtons = document.querySelectorAll('.delete-btn');
+        const confirmationModal = document.getElementById('delete-confirmation-modal');
+        const confirmDeleteBtn = document.getElementById('confirm-delete');
+        const cancelDeleteBtn = document.getElementById('cancel-delete');
+        const employeeNameSpan= document.getElementById('employee-name')
+        let formToSubmit = null;
+
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function () {
+                const employeeName = this.getAttribute('data-employee')
+                employeeNameSpan.textContent = employeeName;
+                formToSubmit = this.closest('.delete-form'); 
+                confirmationModal.style.display = 'flex'; 
+            });
+        });
+
+        // Confirm deletion
+        confirmDeleteBtn.addEventListener('click', function () {
+            if (formToSubmit) {
+                formToSubmit.submit(); // Submit the form
+            }
+            confirmationModal.style.display = 'none'; // Hide the modal
+        });
+
+        // Cancel deletion
+        cancelDeleteBtn.addEventListener('click', function () {
+            confirmationModal.style.display = 'none'; // Hide the modal
+            formToSubmit = null; // Clear the form reference
+        });
+
+        // Close the modal when clicking outside the modal content
+        window.onclick = function (event) {
+            if (event.target === confirmationModal) {
+                confirmationModal.style.display = 'none';
+                formToSubmit = null;
+            }
+        };
+    });
+</script>
+
+<!-- <script>
+    document.getElementById('employee-search').addEventListener('input', function() {
+        const filter = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#employee-table-body tr');
+        rows.forEach(row => {
+            const text = row.innerText.toLowerCase();
+            row.style.display = text.includes(filter) ? '' : 'none';
+        });
+    });
+</script> -->
+
+{% endblock employee-section %}
+
+{% endblock %}

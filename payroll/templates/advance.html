@@ -1,0 +1,209 @@
+{% extends 'employees.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}
+<title>Advance </title>
+{% endblock %}
+
+{% block employee-section %}
+<h1>Advance Records</h1>
+
+
+
+<div class="employee-buttons">
+    <button id="advance-btn" class="advance-btn">Add New</button>
+    <button class="add-employee-btn">
+        <a href="{% url 'employees' %}" class="ded-btn">Employees </a>
+    </button>
+    <button class="add-employee-btn">
+        <a href="{% url 'deductions' %}" class="ded-btn">Deductions</a>
+    </button>
+    <button class="add-employee-btn">
+        <a href="{% url 'arrears' %}" class="ded-btn">Arrears</a>
+    </button>
+ </div>
+    
+
+<div id="advance-modal" class="advance-modal">
+    <div class="advance-modal-content">
+        <span id="close-modal" class="close">&times;</span>
+        <h2>Record Advance</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}                     
+            <button type="submit">Save</button>
+        </form>
+    </div>
+</div>
+
+<div class="advance-list" style="padding:  0 90px 30px 15px;">
+    <h2>Advance List</h2>
+    <div class="button-container">
+        <a href="{% url 'excel_report' %}">
+            <button class="download-btn">Download Excel File</button>
+        </a>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Amount</th>
+                <th>Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for advance in advances %}
+            <tr>
+                <td>{{ advance.employee }}</td>
+                <td>{{ advance.amount|intcomma }}</td>
+                <td>{{ advance.date }}</td>
+                <td>
+                    <button class="edit-btn" onclick="openEditModal('{{ advance.id }}')"  data-employee="{{ advance.employee }}">Edit</button>
+                    <form action="{% url 'delete_advance' advance.id %}" method="post" style="display: inline-block;" class="delete-form">
+                        {% csrf_token %}
+                        <button class="delete-btn" type="button" data-employee="{{ advance.employee }}">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div id="edit-modal" class="advance-modal" style="display: none;">
+    <div class="advance-modal-content">
+        <span id="close-edit-modal" class="close">&times;</span>
+        <h2>Edit <span id="employeeName"></span>'s Advance Record</h2>
+        <form action="" method="post" id="edit-form">
+            {% csrf_token %}
+            <input type="hidden" id="advance-id" name="id">
+
+            <div class="form-group">
+                <label for="edit-amount">Amount:</label>
+                <input type="number" min="0" id="edit-amount" name="amount">
+            </div>
+
+            <div class="form-group">
+                <label for="edit-date">Date:</label>
+                <input type="date" id="edit-date" name="date">
+            </div>
+
+            <button type='submit'>Save Changes</button>
+        </form>
+    </div>
+</div>
+
+
+<div id="delete-confirmation-modal" class="confirmation-modal">
+    <div class="confirmation-modal-content">
+        <h3>Are you sure you want to delete advance records for <span id="employee-name"></span>?</h3>
+        <button id="confirm-delete" class="confirm-btn">Yes, Delete</button>
+        <button id="cancel-delete" class="cancel-btn">Cancel</button>
+    </div>
+</div>
+
+<script>
+    function openEditModal(advanceId) {
+        fetch(`/advance/${advanceId}/edit/`)
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('advance-id').value= advanceId;
+            document.getElementById('edit-amount').value = data.amount;
+            document.getElementById('edit-date').value = data.date
+
+            document.getElementById('edit-form').action =`/advance/${advanceId}/update/`;
+            document.getElementById('edit-modal').style.display = 'block';
+        })
+        .catch(error => console.error('Error:', error));
+    }
+
+    document.getElementById('close-edit-modal').onclick = function () {
+        document.getElementById('edit-modal').style.display = 'none';        
+    };
+
+
+    windows.onclick = function (event) {
+        const modal = document.getElementById('edit-modal');
+        if(event.target == modal) {
+            modal.style.display = 'none'
+        }
+    }
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const editBtns = document.querySelectorAll('.edit-btn')
+        const employeeNameSpan = document.getElementById('employeeName')
+
+        editBtns.forEach(button => {
+            button.addEventListener('click', function () {
+                const employeeName= this.getAttribute('data-employee')
+                employeeNameSpan.textContent = employeeName;
+            })
+        })
+    })
+</script>
+
+<script>
+    const advanceModal = document.getElementById('advance-modal')
+    const openAdvanceModal = document.getElementById('advance-btn')
+    const closeAdvanceModal = document.getElementById('close-modal')
+
+    openAdvanceModal.onclick = function () {
+        advanceModal.style.display = 'block';
+    }
+
+    closeAdvanceModal.onclick = function () {
+        advanceModal.style.display = 'none';
+    }
+
+    windows.onclick =function (event) {
+        if (event.target == advanceModal) {
+            modal.style.display = 'none';
+        }
+    }
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded' , function () {
+    const deleteButtons = document.querySelectorAll('.delete-btn');
+    const confirmationModal = document.getElementById('delete-confirmation-modal');
+    const confirmDeleteBtn = document.getElementById('confirm-delete');
+    const cancelDeleteBtn = document.getElementById('cancel-delete');
+    const employeeNameSpan = document.getElementById('employee-name');
+    let formToSubmit = null;
+
+    deleteButtons.forEach (button => {
+        button.addEventListener('click', function (){
+            const employeeName = this.getAttribute('data-employee');
+            employeeNameSpan.textContent= employeeName;
+            formToSubmit = this.closest('.delete-form');
+            confirmationModal.style.display = 'flex';
+        });
+    });
+
+    confirmDeleteBtn.addEventListener('click', function() {
+        if (formToSubmit) {
+            formToSubmit.submit();
+        }
+        confirmationModal.style.display = 'none';
+    })
+
+    cancelDeleteBtn.addEventListener('click', function() {
+        confirmationModal.style.display = 'none';
+        formToSubmit = null;
+    })
+
+    windows.onclick = function(event) {
+        if (event.target === confirmationModal) {
+            confirmationModal.style.display = 'none';
+            formToSubmit = null;
+        }
+    }
+    })
+</script>
+
+{% endblock %}
+
