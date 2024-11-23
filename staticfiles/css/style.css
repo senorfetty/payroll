@@ -1,0 +1,626 @@
+/* Base Styling */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    background: linear-gradient(to right, #000000, #ff0707);
+    overflow: auto;
+}
+
+.dashboard {
+    width: 100%;
+    max-width: 1200px;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Header */
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 20px;
+    background-color: #ff0000;
+    color: white;
+}
+
+/* Main Content */
+.dashboard-content {
+    padding: 20px;
+    overflow-x: auto;
+}
+
+.quick-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.card {
+    flex: 1;
+    padding: 20px;
+    background-color: #e7f3e7;
+    border-radius: 8px;
+    text-align: center;
+    margin: 5px;
+    min-width: 150px;
+}
+
+/* Recent Activity and Payroll Summary */
+.recent-activity, .quick-actions, .payroll-summary {
+    margin-bottom: 20px;
+}
+
+.payroll-summary {
+    text-align: center;
+    margin: 0;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+canvas {
+    max-width: 50%;
+    height: auto;
+    margin: 0;
+}
+
+#payrollChart {
+    width: 300px;
+    height: 150px;
+    margin: 0;
+}
+
+.quick-actions button {
+    padding: 10px 20px;
+    margin-right: 10px;
+    border: none;
+    background-color: #000000;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.quick-actions button:hover {
+    background-color: #ff0000;
+}
+
+.counts {
+    font-size: larger;
+    font-weight: bolder;
+    color: red;
+    font-style: italic;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+}
+
+.chart-placeholder {
+    height: 300px;
+    background-color: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #999;
+}
+
+/* Footer */
+.dashboard-footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #f0f2f5;
+    color: #888;
+}
+
+.logo img {
+    max-width: 120px;
+    max-height: 50px;
+    height: auto;
+    width: auto;
+}
+
+/* Employee Form & List */
+.employee-form, .employee-list {
+    margin: 20px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    margin-top: 20px;
+}
+
+.table-wrapper table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.table-wrapper th,
+.table-wrapper td {
+    padding: 5px 5px;
+    border-bottom: 1px solid #ddd;
+    border-right: #ff000051 1px solid;
+    text-align: left;
+}
+
+.table-wrapper th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+    color: #333;
+}
+
+.table-wrapper tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.table-wrapper tr:hover {
+    background-color: #f1f1f1;
+}
+/* Button Styling */
+.add-employee-btn, .advance-btn, .deduction-btn {
+    padding: 10px 20px;
+    background-color: #000000;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+.employee-buttons {
+    gap: 10px;
+}
+
+.ded-btn {
+    color: white;
+    text-decoration: none;
+}
+
+.add-employee-btn:hover {
+    background-color: red;
+}
+
+/* Modal Styling */
+.employee-modal, .advance-modal, .deduction-modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+}
+
+.employee-modal-content, .advance-modal-content, .deduction-modal-content {
+    background-color: #fefefe;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    position: relative;
+    margin: auto;
+}
+
+/* Close Button */
+.close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 24px;
+    cursor: pointer;
+    color: #aaa;
+}
+
+.close:hover {
+    color: #333;
+}
+
+/* Form Groups */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.form-group input,
+.form-group select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100%;
+}
+
+.submit-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.submit-btn:hover {
+    background-color: #45a049;
+}
+
+/* Confirmation Modal */
+.confirmation-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.confirmation-modal-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+.confirm-btn, .cancel-btn {
+    margin: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+.confirm-btn {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.cancel-btn {
+    background-color: #95a5a6;
+    color: white;
+}
+
+/* Delete Button */
+.delete-btn {
+    background-color: red;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: darkred;
+    cursor: pointer;
+}
+
+/* Edit Button */
+.edit-btn:hover {
+    cursor: pointer;
+    background-color: black;
+    color: white;
+}
+
+#edit-modal .employee-modal-content {
+    max-height: 80vh; 
+    overflow-y: auto;
+}
+
+
+.employee-buttons {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px;
+    margin: auto;
+}
+
+.user-profile {
+    display: flex;
+    justify-content: flex-end; /* Align the button to the right */
+    padding: 10px;
+}
+
+.logout-btn {
+    background-color: #e74c3c; /* Red background color */
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.logout-btn a {
+    color: white;
+    text-decoration: none; /* Remove underline */
+}
+
+.logout-btn:hover {
+    background-color: #c0392b; /* Darker red on hover */
+}
+
+
+@media (max-width: 868px) {
+    .dashboard-content {
+        padding: 10px;
+        overflow-x: auto;
+    }
+
+    .employee-list-wrapper, .table-wrapper {
+        overflow-x: auto;
+    }
+
+    .quick-stats {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .employee-buttons {
+        flex-direction: column;
+    }
+
+    .quick-actions button {
+        margin-bottom: 10px;
+        width: 100%;
+    }
+
+    .confirmation-modal-content, .employee-modal-content, .advance-modal-content {
+        width: 90%;
+    }
+
+    .employee-list {
+        padding: 10px;
+    }
+
+   
+    table, th, td {
+        font-size: 14px; /* Adjust font size for smaller screens */
+    }
+}
+
+.deductions-section {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.deductions-header {
+    text-align: center;
+    font-size: 1.8em;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.deductions-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.deductions-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.deductions-table th, .deductions-table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.deductions-table th {
+    background-color: #4CAF50;
+    color: white;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.deductions-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.deduction-input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+.update-btn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s;
+}
+
+.update-btn:hover {
+    background-color: #45a049;
+}
+
+.total-row td {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #333;
+    padding: 12px;
+    background-color: #e0f7fa;
+    border-top: 3px solid #4CAF50;
+}
+
+.total-row td:first-child {
+    text-align: left;
+}
+
+.total-row td:last-child {
+    text-align: right;
+}
+
+.search-bar {
+    margin: 20px 0;
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+.search-bar input[type="text"] {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #000000;
+    border-radius: 5px;
+    width: 300px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.search-bar input[type="text"]:focus {
+    border-color: #ff0000;
+}
+
+.search-bar button {
+    background-color: #000000;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.search-bar button:hover {
+    background-color: #da0b0b;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+    gap: 8px;
+    font-size: 16px;
+}
+
+.pagination a {
+    text-decoration: none;
+    color: #000000;
+    padding: 8px 12px;
+    border: 1px solid #ff0000;
+    border-radius: 4px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.pagination a:hover {
+    background-color: #000000;
+    color: rgb(255, 255, 255);
+}
+
+.pagination span {
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: #f8f9fa;
+}
+
+.payslip {
+    max-width: 600px;
+    margin: 0 auto;
+    border: 1px solid #ccc;
+    padding: 20px;
+}
+
+
+.button-container {
+    display: flex;
+    justify-content: center; 
+    margin-top: 30px; 
+}
+
+
+.download-btn {
+    background-color: #ff0000;
+    color: #fff; 
+    border: none;
+    padding: 12px 25px; 
+    font-size: 16px; 
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); 
+}
+
+
+.download-btn:hover {
+    background-color: #000000; 
+    transform: translateY(-3px); 
+}
+
+
+.download-btn:focus {
+    outline: none;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+}
+
+
+@media (max-width: 600px) {
+    .download-btn {
+        padding: 10px 20px; 
+        font-size: 14px;
+    }
+}
+
+.confirmation-modal-logout {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    justify-content: center;
+    align-items: center;
+}
+
+.confirmation-modal-content-logout {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+button {
+    padding: 10px;
+    margin: 5px;
+    cursor: pointer;
+}
+.confirm-btn-logout {
+    background-color: red;
+    color: white;
+}
+.cancel-btn-logout {
+    background-color: gray;
+    color: white;
+}
