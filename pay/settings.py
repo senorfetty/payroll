@@ -25,7 +25,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-@wydw!xl8%c*vl-vf31c_58-i!1btqcwst()fw6aj!#teuk)yf'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 
 ALLOWED_HOSTS = ['payroll-production-e19a.up.railway.app', '127.0.0.1', 'localhost']
@@ -136,3 +136,5 @@ STATICFILES_STORAGE= 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 logo_path= os.path.join(BASE_DIR,'static','img','logo.jpg')
+
+LOGIN_URL = 'index'

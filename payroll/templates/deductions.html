@@ -13,16 +13,15 @@
 
 <div class="employee-buttons">
     <button id="deduction-btn" class="deduction-btn">Add New</button>
-    <button class="add-employee-btn">
-        <a href="{% url 'employees' %}" class="ded-btn">Employees </a>
-    </button>
-    <button class="add-employee-btn">
-        <a href="{% url 'advance' %}" class="ded-btn">Advances</a>
-    </button>
-    <button class="add-employee-btn">
-        <a href="{% url 'arrears' %}" class="ded-btn">Arrears</a>
-    </button>
-
+    <a href="{% url 'employees' %}" class="dedi-btn">
+        <button >Employees</button>
+    </a>
+    <a href="{% url 'advance' %}" class="dedi-btn">
+        <button >Advance</button>
+    </a>
+    <a href="{% url 'arrears' %}" class="dedi-btn">
+        <button >Arrears</button>
+    </a>    
  </div>
 
 
@@ -38,43 +37,48 @@
     </div>
 </div>
 
-<div class="deductions-section">
-    <h2 class="deductions-header">Deductions</h2>
-    <div class="button-container">
-        <a href="{% url 'excel_report' %}">
-            <button class="download-btn">Download Excel File</button>
-        </a>
+
+<div class="button-container">
+    <a href="{% url 'excel_report' %}">
+        <button class="download-btn">Download Excel File</button>
+    </a>
+</div>
+<div class="employee-list-wrapper">
+    <div class="employee-list">
+        <h2>Deductions</h2>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>NHIF</th>
+                        <th>NSSF</th>
+                        <th>UNIFORM</th>
+                        <th>FUEL</th>
+                        <th>Manage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for deduction in deductions %}
+                    <tr>
+                        <td>{{deduction.employee}}</td>
+                        <td>{{deduction.nhif}}</td>
+                        <td>{{deduction.nssf}}</td>
+                        <td>{{deduction.uniform}}</td>
+                        <td>{{deduction.fuel}}</td>
+                        <td>
+                            <button class="edit-btn" onclick="openEditModal('{{ deduction.id }}')"  data-employee='{{ deduction.employee }}' >Edit</button>
+                            <form action="{% url 'delete_deductions' deduction.id %}" method="post" style="display: inline-block;" class="delete-form">
+                                {% csrf_token %}
+                                <button class="delete-btn" type="button" data-employee="{{ deduction.employee }}"> Delete </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}                
+                </tbody>
+            </table>
+        </div>
     </div>
-        <table class="deductions-table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>NHIF</th>
-                    <th>NSSF</th>
-                    <th>UNIFORM</th>
-                    <th>FUEL</th>
-                    <th>Manage</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for deduction in deductions %}
-                <tr>
-                    <td>{{deduction.employee}}</td>
-                    <td>{{deduction.nhif}}</td>
-                    <td>{{deduction.nssf}}</td>
-                    <td>{{deduction.uniform}}</td>
-                    <td>{{deduction.fuel}}</td>
-                    <td>
-                        <button class="edit-btn" onclick="openEditModal('{{ deduction.id }}')"  data-employee='{{ deduction.employee }}' >Edit</button>
-                        <form action="{% url 'delete_deductions' deduction.id %}" method="post" style="display: inline-block;" class="delete-form">
-                            {% csrf_token %}
-                            <button class="delete-btn" type="button" data-employee="{{ deduction.employee }}"> Delete </button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}                
-            </tbody>
-        </table>
 </div>
 
 <div id="edit-modal" class="deduction-modal" style="display: none">

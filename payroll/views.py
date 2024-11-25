@@ -13,8 +13,10 @@ from django.http import HttpResponse
 from django.template.loader import render_to_string
 from xhtml2pdf import pisa
 from openpyxl import Workbook
+from django.contrib.auth.decorators import login_required
 import base64, os
 # Create your views here.
+
 
 def index(request):
     if request.method == 'POST':
@@ -34,6 +36,7 @@ def index(request):
     else:
         return render(request, 'index.html')
 
+@login_required
 def dashboard(request):
     employees = Employee.objects.all()
     advances = Advance.objects.all()
@@ -66,6 +69,7 @@ def dashboard(request):
         
     return render(request, 'dashboard.html', {'employee_count': employee_count, 'payroll_amount' : payroll_amount, 'advance_amounts':advance_amounts, 'netpay_total': netpay_total,'recent_activities':recent_activities,'chart_data':chart_data})
 
+@login_required
 def employees(request):
     if request.method == 'POST':
         form = EmployeeForm(request.POST)
@@ -90,6 +94,7 @@ def employees(request):
 
     return render(request, 'employees.html', {'form': form, 'employees': employees_page, 'query': query})
 
+@login_required
 def generate_employee_list(request):
     employees= Employee.objects.all()
     
@@ -120,6 +125,7 @@ def generate_employee_list(request):
     
     return response
     
+@login_required
 def get_employee_data(request, employee_id):
     employee = get_object_or_404(Employee, employee_id=employee_id)
     data = {
@@ -134,6 +140,7 @@ def get_employee_data(request, employee_id):
     }
     return JsonResponse(data)
 
+@login_required
 def update_employee(request, employee_id):
     if request.method == "POST":
         employee = get_object_or_404(Employee, employee_id=employee_id)
@@ -148,11 +155,13 @@ def update_employee(request, employee_id):
         employee.save()
         return redirect('employees')
 
+@login_required
 def delete_employee(request,employee_id):
     employee = get_object_or_404(Employee,employee_id=employee_id)
     employee.delete()
     return redirect('employees')
-
+ 
+@login_required
 def advance(request):    
     if request.method == 'POST':
         form = AdvanceForm(request.POST)
@@ -167,6 +176,7 @@ def advance(request):
         
     return render(request, 'advance.html',{'advances':advances, 'form' : form})
 
+@login_required
 def get_advance_data(request,advance_id):
     advance = get_object_or_404(Advance, id=advance_id)
     data = {
@@ -176,6 +186,7 @@ def get_advance_data(request,advance_id):
     
     return JsonResponse(data)
 
+@login_required
 def update_advance(request,advance_id):
     if request.method == 'POST':
         advance= get_object_or_404(Advance,id=advance_id)
@@ -185,11 +196,13 @@ def update_advance(request,advance_id):
         advance.save()
         return redirect('advance')
 
+@login_required
 def delete_advance(request,advance_id):
     advance= get_object_or_404(Advance,id=advance_id)
     advance.delete()
     return redirect('advance')
 
+@login_required
 def deductions(request):
     if request.method == 'POST':
         form = DeductionForm(request.POST)
@@ -204,6 +217,7 @@ def deductions(request):
     
     return render(request, 'deductions.html', {'deductions': deductions, 'form' : form})
 
+@login_required
 def get_deduction_data(request,deduction_id):
     deduction = get_object_or_404(Deduction,id=deduction_id)
     
@@ -216,6 +230,7 @@ def get_deduction_data(request,deduction_id):
     
     return JsonResponse(data)
 
+@login_required
 def update_deduction(request,deduction_id):
     if request.method == 'POST':
         deduction = get_object_or_404(Deduction,id=deduction_id)
@@ -227,15 +242,18 @@ def update_deduction(request,deduction_id):
         deduction.save()
         return redirect('deductions')
        
+@login_required
 def delete_deductions(request,deduction_id):
     deduction=get_object_or_404(Deduction,id=deduction_id)
     deduction.delete()
     return redirect('deductions')
 
+
 def log_out(request):
     logout(request)
     return redirect('index')
 
+@login_required
 def arrears(request):
     if request.method == 'POST':
         form= ArrearsForm(request.POST)
@@ -249,6 +267,7 @@ def arrears(request):
     arrears= Arrears.objects.all()
     
     return render(request,'arrears.html', {'form':form, 'arrears':arrears})
+
 
 def get_arrears_data(request,arrears_id):
     arrears= get_object_or_404(Arrears, id=arrears_id)
@@ -276,6 +295,7 @@ def delete_arrears(request,arrears_id):
     arrears.delete()
     return redirect('arrears')
 
+@login_required
 def generate_payslip(request,employee_id):
     employee = Employee.objects.get(employee_id=employee_id)
 
@@ -315,6 +335,7 @@ def generate_payslip(request,employee_id):
         
     return response
 
+@login_required
 def payroll_report(request):
     employees = Employee.objects.all()
     

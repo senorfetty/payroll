@@ -13,15 +13,15 @@
 
 <div class="employee-buttons">
     <button id="deduction-btn" class="deduction-btn">Add New</button>
-    <button class="add-employee-btn">
-        <a href="{% url 'employees' %}" class="ded-btn">Employees </a>
-    </button>
-    <button class="add-employee-btn">
-        <a href="{% url 'deductions' %}" class="ded-btn">Deductions</a>
-    </button>
-    <button class="add-employee-btn">
-        <a href="{% url 'advance' %}" class="ded-btn">Advances</a>
-    </button>
+    <a href="{% url 'employees' %}" class="dedi-btn">
+        <button >Employees</button>
+    </a>
+    <a href="{% url 'deductions' %}" class="dedi-btn">
+        <button >Deductions</button>
+    </a>
+    <a href="{% url 'advance' %}" class="dedi-btn">
+        <button >Advances</button>
+    </a>    
  </div>
 
 
@@ -37,39 +37,45 @@
     </div>
 </div>
 
-<div class="deductions-section">
-    <h2 class="deductions-header">Month arrears</h2>
+
     <div class="button-container">
         <a href="{% url 'excel_report' %}">
             <button class="download-btn">Download Excel File</button>
         </a>
     </div>
-        <table class="deductions-table">
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Amount</th>
-                    <th>Month</th>
-                    <th>Manage</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for arrear in arrears %}
-                <tr>
-                    <td>{{arrear.employee}}</td>
-                    <td>{{arrear.amount|intcomma}}</td>
-                    <td>{{arrear.month}}</td>
-                    <td>
-                        <button class="edit-btn" onclick="openEditModal('{{arrear.id}}')"  data-employee="{{arrear.employee}}">Edit</button>
-                        <form action="{% url 'delete_arrears' arrear.id %}" method="post" style="display: inline-block;" class="delete-form">
-                            {% csrf_token %}
-                            <button class="delete-btn" type="button" data-employee="{{ arrear.employee }}"> Delete </button>
-                        </form>
-                    </td>
-                </tr>
-                {% endfor %}                
-            </tbody>
-        </table>
+
+<div class="employee-list-wrapper">
+    <div class="employee-list">
+        <h2>Month arrears</h2>
+        <div class="table-wrapper">
+            <table >
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Amount</th>
+                        <th>Month</th>
+                        <th>Manage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for arrear in arrears %}
+                    <tr>
+                        <td>{{arrear.employee}}</td>
+                        <td>{{arrear.amount|intcomma}}</td>
+                        <td>{{arrear.month}}</td>
+                        <td>
+                            <button class="edit-btn" onclick="openEditModal('{{arrear.id}}')"  data-employee="{{arrear.employee}}">Edit</button>
+                            <form action="{% url 'delete_arrears' arrear.id %}" method="post" style="display: inline-block;" class="delete-form">
+                                {% csrf_token %}
+                                <button class="delete-btn" type="button" data-employee="{{ arrear.employee }}"> Delete </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}                
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <div id="delete-confirmation-modal" class="confirmation-modal">

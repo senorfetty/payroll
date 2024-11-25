@@ -3,8 +3,10 @@
 {% load humanize %}
 
 {% block title %}
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes">
 <title>SPS Employees</title>
 {% endblock %}
+
 
 {% block this %}
 
@@ -34,16 +36,15 @@
 <!-- Add Employee Button -->
  <div class="employee-buttons">
     <button id="add-employee-btn" class="add-employee-btn">Add New Employee</button>
-    <button class="add-employee-btn">
-        <a href="{% url 'advance' %}" class="ded-btn">Advance </a>
-    </button>
-    <button class="add-employee-btn">
-        <a href="{% url 'deductions' %}" class="ded-btn">Deductions</a>
-    </button>
-    <button class="add-employee-btn">
-        <a href="{% url 'arrears' %}" class="ded-btn">Arrears</a>
-    </button>
-
+    <a href="{% url 'advance' %}" class="dedi-btn">
+        <button >Advance</button>
+    </a>
+    <a href="{% url 'deductions' %}" class="dedi-btn">
+        <button >Deductions</button>
+    </a>
+    <a href="{% url 'arrears' %}" class="dedi-btn">
+        <button >Arrers</button>
+    </a>    
  </div>
 
 <!-- Employee Form Modal -->

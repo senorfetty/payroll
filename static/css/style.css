@@ -142,16 +142,18 @@ canvas {
 
 .table-wrapper th,
 .table-wrapper td {
-    padding: 5px 5px;
+    padding: 2px;
     border-bottom: 1px solid #ddd;
-    border-right: #ff000051 1px solid;
+    border-right: #da090953 1px solid;
     text-align: left;
 }
 
+
 .table-wrapper th {
-    background-color: #f8f9fa;
+    background-color: #000000;
     font-weight: bold;
-    color: #333;
+    border-right: 1px solid white;
+    color: #ffffff;
 }
 
 .table-wrapper tr:nth-child(even) {
@@ -299,6 +301,7 @@ canvas {
 /* Delete Button */
 .delete-btn {
     background-color: red;
+    padding: 5px;
     color: white;
 }
 
@@ -308,6 +311,11 @@ canvas {
 }
 
 /* Edit Button */
+
+.edit-btn {
+    padding: 5px;
+}
+
 .edit-btn:hover {
     cursor: pointer;
     background-color: black;
@@ -360,7 +368,7 @@ canvas {
         overflow-x: auto;
     }
 
-    .employee-list-wrapper, .table-wrapper {
+    .employee-list-wrapper, .table-wrapper, .deductions-table {
         overflow-x: auto;
     }
 
@@ -393,12 +401,13 @@ canvas {
 }
 
 .deductions-section {
-    max-width: 600px;
+    max-width: 100%;
     margin: 0 auto;
-    padding: 20px;
+    padding:5px;
     background-color: #f9f9f9;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow-x: auto;
 }
 
 .deductions-header {
@@ -418,6 +427,8 @@ canvas {
     width: 100%;
     border-collapse: collapse;
     margin-bottom: 20px;
+    min-width: 800px;
+    overflow-x: auto;
 }
 
 .deductions-table th, .deductions-table td {
@@ -623,4 +634,19 @@ button {
 .cancel-btn-logout {
     background-color: gray;
     color: white;
+}
+
+.dedi-btn {
+    background-color: #000000;
+    margin-right: 10px;
+    margin-left: 10px;
+    text-align: center;
+    align-items: center;
+    border-radius: 15px;
+}
+
+.dedi-btn button {
+    background-color: black;
+    color:white;
+    border: #000000;
 }

@@ -13,15 +13,15 @@
 
 <div class="employee-buttons">
     <button id="advance-btn" class="advance-btn">Add New</button>
-    <button class="add-employee-btn">
-        <a href="{% url 'employees' %}" class="ded-btn">Employees </a>
-    </button>
-    <button class="add-employee-btn">
-        <a href="{% url 'deductions' %}" class="ded-btn">Deductions</a>
-    </button>
-    <button class="add-employee-btn">
-        <a href="{% url 'arrears' %}" class="ded-btn">Arrears</a>
-    </button>
+    <a href="{% url 'employees' %}" class="dedi-btn">
+        <button >Employees</button>
+    </a>
+    <a href="{% url 'deductions' %}" class="dedi-btn">
+        <button >Deductions</button>
+    </a>
+    <a href="{% url 'arrears' %}" class="dedi-btn">
+        <button >Arrears</button>
+    </a>    
  </div>
     
 
@@ -37,39 +37,44 @@
     </div>
 </div>
 
-<div class="advance-list" style="padding:  0 90px 30px 15px;">
-    <h2>Advance List</h2>
+
     <div class="button-container">
         <a href="{% url 'excel_report' %}">
             <button class="download-btn">Download Excel File</button>
         </a>
     </div>
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Amount</th>
-                <th>Date</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for advance in advances %}
-            <tr>
-                <td>{{ advance.employee }}</td>
-                <td>{{ advance.amount|intcomma }}</td>
-                <td>{{ advance.date }}</td>
-                <td>
-                    <button class="edit-btn" onclick="openEditModal('{{ advance.id }}')"  data-employee="{{ advance.employee }}">Edit</button>
-                    <form action="{% url 'delete_advance' advance.id %}" method="post" style="display: inline-block;" class="delete-form">
-                        {% csrf_token %}
-                        <button class="delete-btn" type="button" data-employee="{{ advance.employee }}">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="employee-list-wrapper">
+    <div class="employee-list">
+        <h2>Advance List</h2>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for advance in advances %}
+                    <tr>
+                        <td>{{ advance.employee }}</td>
+                        <td>{{ advance.amount|intcomma }}</td>
+                        <td>{{ advance.date }}</td>
+                        <td>
+                            <button class="edit-btn" onclick="openEditModal('{{ advance.id }}')"  data-employee="{{ advance.employee }}">Edit</button>
+                            <form action="{% url 'delete_advance' advance.id %}" method="post" style="display: inline-block;" class="delete-form">
+                                {% csrf_token %}
+                                <button class="delete-btn" type="button" data-employee="{{ advance.employee }}">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <div id="edit-modal" class="advance-modal" style="display: none;">
